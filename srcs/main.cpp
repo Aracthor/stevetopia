@@ -7,7 +7,7 @@ int main(int argc, char** argv)
     try
     {
         hatcher::GameApplication demo(argc, argv);
-        demo.StartRendering("hatcher - demo", 800, 600);
+        demo.StartRendering("Stevetopia", 800, 600);
         return demo.Run();
     }
     catch (const std::exception& exception)
