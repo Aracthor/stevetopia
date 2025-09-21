@@ -1,0 +1,3 @@
+[submodule "hatcher"]
+	path = hatcher
+	url = https://github.com/Aracthor/hatcher
