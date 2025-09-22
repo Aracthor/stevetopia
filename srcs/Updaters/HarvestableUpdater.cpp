@@ -1,7 +1,7 @@
 #include "Components/GrowableComponent.hpp"
 #include "Components/HarvestableComponent.hpp"
 #include "Components/ItemComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 
 #include "hatcher/ComponentAccessor.hpp"
 #include "hatcher/EntityManager.hpp"
@@ -21,7 +21,7 @@ class HarvestableUpdater final : public Updater
         const auto harvestableComponent = componentAccessor->ReadComponents<HarvestableComponent>()[entity];
         if (harvestableComponent)
         {
-            const auto positionComponent = componentAccessor->ReadComponents<Position2DComponent>()[entity];
+            const auto positionComponent = componentAccessor->ReadComponents<PositionComponent>()[entity];
             const auto growableComponent = componentAccessor->ReadComponents<GrowableComponent>()[entity];
             int amount = harvestableComponent->amount;
             if (growableComponent)
@@ -31,7 +31,7 @@ class HarvestableUpdater final : public Updater
             {
                 HATCHER_ASSERT(positionComponent);
                 EntityEgg item = entityManager->CreateNewEntity(harvestableComponent->harvest);
-                item.GetComponent<Position2DComponent>() = *positionComponent;
+                item.GetComponent<PositionComponent>() = *positionComponent;
                 if (amount > 1)
                 {
                     HATCHER_ASSERT(item.GetComponent<ItemComponent>());

@@ -1,7 +1,7 @@
 #include "RenderUpdaterOrder.hpp"
 
-#include "Components/Movement2DComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "RenderComponents/SelectableComponent.hpp"
 #include "utils/TransformationHelper.hpp"
 
@@ -73,15 +73,15 @@ class SelectionRectangleEventListener : public IEventListener
         {
             ComponentWriter<SelectableComponent> selectableComponents =
                 renderComponentAccessor->WriteComponents<SelectableComponent>();
-            ComponentReader<Position2DComponent> positionComponents =
-                componentAccessor->ReadComponents<Position2DComponent>();
+            ComponentReader<PositionComponent> positionComponents =
+                componentAccessor->ReadComponents<PositionComponent>();
             const Box2f selectionBox = selectionRectangle.GetCurrentSelection();
 
             HATCHER_ASSERT(componentAccessor->Count() == renderComponentAccessor->Count());
             for (int i = 0; i < componentAccessor->Count(); i++)
             {
                 std::optional<SelectableComponent>& selectableComponent = selectableComponents[i];
-                const std::optional<Position2DComponent>& positionComponent = positionComponents[i];
+                const std::optional<PositionComponent>& positionComponent = positionComponents[i];
                 if (selectableComponent && positionComponent)
                 {
                     const glm::mat4 modelMatrix = TransformationHelper::ModelFromComponents(*positionComponent);

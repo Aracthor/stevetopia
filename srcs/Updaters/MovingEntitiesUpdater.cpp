@@ -1,5 +1,5 @@
-#include "Components/Movement2DComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PositionComponent.hpp"
 
 #include "hatcher/ComponentAccessor.hpp"
 #include "hatcher/Maths/glm_pure.hpp"
@@ -15,8 +15,8 @@ class MovingEntitiesUpdater final : public Updater
 public:
     void Update(IEntityManager* entityManager, ComponentAccessor* componentAccessor) override
     {
-        ComponentWriter<Position2DComponent> positions = componentAccessor->WriteComponents<Position2DComponent>();
-        ComponentWriter<Movement2DComponent> movements = componentAccessor->WriteComponents<Movement2DComponent>();
+        ComponentWriter<PositionComponent> positions = componentAccessor->WriteComponents<PositionComponent>();
+        ComponentWriter<MovementComponent> movements = componentAccessor->WriteComponents<MovementComponent>();
 
         for (int i = 0; i < componentAccessor->Count(); i++)
         {
@@ -24,8 +24,8 @@ public:
             {
                 HATCHER_ASSERT(positions[i]);
                 float movementLength = 0.05f;
-                Movement2DComponent& movement2D = *movements[i];
-                Position2DComponent& position2D = *positions[i];
+                MovementComponent& movement2D = *movements[i];
+                PositionComponent& position2D = *positions[i];
                 if (!movement2D.path.empty())
                 {
                     const glm::vec2 startPosition = position2D.position;

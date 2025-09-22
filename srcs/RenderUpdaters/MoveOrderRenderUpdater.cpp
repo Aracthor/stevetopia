@@ -1,5 +1,5 @@
-#include "Components/Movement2DComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "RenderComponents/SelectableComponent.hpp"
 #include "WorldComponents/Camera.hpp"
 #include "WorldComponents/SquareGrid.hpp"
@@ -27,7 +27,7 @@ public:
 
     void Execute(IEntityManager* entityManager, ComponentAccessor* componentAccessor) override
     {
-        componentAccessor->WriteComponents<Movement2DComponent>()[m_entity]->path = m_path;
+        componentAccessor->WriteComponents<MovementComponent>()[m_entity]->path = m_path;
     }
 
 private:
@@ -54,16 +54,16 @@ public:
             if (!grid->GetTileData(worldCoords2D).walkable)
                 return;
 
-            auto movementComponents = componentAccessor->ReadComponents<Movement2DComponent>();
+            auto movementComponents = componentAccessor->ReadComponents<MovementComponent>();
             auto selectableComponents = renderComponentAccessor->ReadComponents<SelectableComponent>();
-            auto positionComponents = componentAccessor->ReadComponents<Position2DComponent>();
+            auto positionComponents = componentAccessor->ReadComponents<PositionComponent>();
 
             HATCHER_ASSERT(componentAccessor->Count() == renderComponentAccessor->Count());
             for (int i = 0; i < componentAccessor->Count(); i++)
             {
-                const std::optional<Movement2DComponent>& movementComponent = movementComponents[i];
+                const std::optional<MovementComponent>& movementComponent = movementComponents[i];
                 const std::optional<SelectableComponent>& selectableComponent = selectableComponents[i];
-                const std::optional<Position2DComponent>& positionComponent = positionComponents[i];
+                const std::optional<PositionComponent>& positionComponent = positionComponents[i];
                 if (selectableComponent && selectableComponent->selected && movementComponent)
                 {
                     HATCHER_ASSERT(positionComponent);

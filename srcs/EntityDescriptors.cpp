@@ -7,10 +7,10 @@
 #include "Components/InventoryComponent.hpp"
 #include "Components/ItemComponent.hpp"
 #include "Components/LockableComponent.hpp"
-#include "Components/Movement2DComponent.hpp"
+#include "Components/MovementComponent.hpp"
 #include "Components/NameComponent.hpp"
 #include "Components/ObstacleComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "Components/WorkerComponent.hpp"
 #include "RenderComponents/ItemDisplayComponent.hpp"
 #include "RenderComponents/SelectableComponent.hpp"
@@ -29,10 +29,10 @@ ComponentTypeRegisterer<InventoryComponent, EComponentList::Gameplay> inventoryR
 ComponentTypeRegisterer<HarvestableComponent, EComponentList::Gameplay> harvestableRegisterer;
 ComponentTypeRegisterer<ItemComponent, EComponentList::Gameplay> itemRegisterer;
 ComponentTypeRegisterer<LockableComponent, EComponentList::Gameplay> lockableRegisterer;
-ComponentTypeRegisterer<Movement2DComponent, EComponentList::Gameplay> movement2DRegisterer;
+ComponentTypeRegisterer<MovementComponent, EComponentList::Gameplay> movement2DRegisterer;
 ComponentTypeRegisterer<NameComponent, EComponentList::Gameplay> nameRegisterer;
 ComponentTypeRegisterer<ObstacleComponent, EComponentList::Gameplay> obstacleRegisterer;
-ComponentTypeRegisterer<Position2DComponent, EComponentList::Gameplay> position2DRegisterer;
+ComponentTypeRegisterer<PositionComponent, EComponentList::Gameplay> position2DRegisterer;
 ComponentTypeRegisterer<WorkerComponent, EComponentList::Gameplay> workerRegisterer;
 
 ComponentTypeRegisterer<ItemDisplayComponent, EComponentList::Rendering> itemDisplayRegisterer;
@@ -67,7 +67,7 @@ EntityDescriptorRegisterer LoggingHut{
         ObstacleComponent{
             .area = Box2i(glm::ivec2(-1, -1), glm::ivec2(1, 1)),
         },
-        Position2DComponent{},
+        PositionComponent{},
     },
     {
         SelectableComponent{},
@@ -87,7 +87,7 @@ EntityDescriptorRegisterer Melon{
             .maturity = 0.25,
             .growthTime = HoursToTicks(1.f),
         },
-        Position2DComponent{},
+        PositionComponent{},
     },
     {
         StaticMeshComponent{
@@ -120,7 +120,7 @@ EntityDescriptorRegisterer Rack{
         ObstacleComponent{
             .area = Box2i(glm::ivec2(0, 0)),
         },
-        Position2DComponent{},
+        PositionComponent{},
     },
     {
         ItemDisplayComponent{.locations = RackToolLocations()},
@@ -136,11 +136,11 @@ EntityDescriptorRegisterer Steve{
     {
         ActionPlanningComponent{},
         InventoryComponent{},
-        Movement2DComponent{},
+        MovementComponent{},
         NameComponent{
             .name = "Steve",
         },
-        Position2DComponent{},
+        PositionComponent{},
         WorkerComponent{},
     },
     {
@@ -168,7 +168,7 @@ EntityDescriptorRegisterer Tree{
         ObstacleComponent{
             .area = Box2i(glm::ivec2(0, 0)),
         },
-        Position2DComponent{},
+        PositionComponent{},
     },
     {
         StaticMeshComponent{

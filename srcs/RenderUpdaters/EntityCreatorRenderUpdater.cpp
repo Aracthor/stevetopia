@@ -1,6 +1,6 @@
 #include "Components/InventoryComponent.hpp"
 #include "Components/ItemComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "WorldComponents/Camera.hpp"
 #include "WorldComponents/SquareGrid.hpp"
 
@@ -47,8 +47,8 @@ public:
     void Execute(IEntityManager* entityManager, ComponentAccessor* componentAccessor) override
     {
         EntityEgg entityEgg = entityManager->CreateNewEntity(m_entityDescriptor);
-        entityEgg.GetComponent<Position2DComponent>() = Position2DComponent();
-        entityEgg.GetComponent<Position2DComponent>()->position = m_spawnPosition;
+        entityEgg.GetComponent<PositionComponent>() = PositionComponent();
+        entityEgg.GetComponent<PositionComponent>()->position = m_spawnPosition;
 
         std::vector<Entity> inventoryStorage;
         for (const EntityDescriptorID& itemDescriptor : m_inventoryDescriptors)

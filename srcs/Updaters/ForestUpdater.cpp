@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "Components/GrowableComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "WorldComponents/SquareGrid.hpp"
 
 using namespace hatcher;
@@ -40,7 +40,7 @@ class ForestUpdater final : public Updater
                 return result;
             }();
             positions.push_back(position);
-            tree.GetComponent<Position2DComponent>()->position = grid->GetTileCenter(position);
+            tree.GetComponent<PositionComponent>()->position = grid->GetTileCenter(position);
             tree.GetComponent<GrowableComponent>()->maturity = 1.f;
         }
     }

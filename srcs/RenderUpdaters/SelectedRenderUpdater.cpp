@@ -11,7 +11,7 @@
 #include "hatcher/unique_ptr.hpp"
 
 #include "Components/ObstacleComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "RenderComponents/SelectableComponent.hpp"
 #include "utils/TransformationHelper.hpp"
 
@@ -62,12 +62,12 @@ public:
         frameRenderer.PrepareSceneDraw(m_material.get());
 
         auto selectableComponents = renderComponentAccessor->ReadComponents<SelectableComponent>();
-        auto positionComponents = componentAccessor->ReadComponents<Position2DComponent>();
+        auto positionComponents = componentAccessor->ReadComponents<PositionComponent>();
         auto obstacleComponents = componentAccessor->ReadComponents<ObstacleComponent>();
         for (int i = 0; i < componentAccessor->Count(); i++)
         {
             const std::optional<SelectableComponent>& selectableComponent = selectableComponents[i];
-            const std::optional<Position2DComponent>& positionComponent = positionComponents[i];
+            const std::optional<PositionComponent>& positionComponent = positionComponents[i];
             if (positionComponent && selectableComponent && selectableComponent->selected)
             {
                 glm::mat4 modelMatrix = TransformationHelper::ModelFromComponents(*positionComponent);

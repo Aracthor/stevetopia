@@ -13,8 +13,8 @@
 
 #include "Components/InventoryComponent.hpp"
 #include "Components/ItemComponent.hpp"
-#include "Components/Movement2DComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "Components/WorkerComponent.hpp"
 #include "RenderComponents/ItemDisplayComponent.hpp"
 #include "RenderComponents/SelectableComponent.hpp"
@@ -34,8 +34,8 @@ public:
     void Update(IApplication* application, const ComponentAccessor* componentAccessor,
                 ComponentAccessor* renderComponentAccessor, IFrameRenderer& frameRenderer) override
     {
-        const auto positionComponents = componentAccessor->ReadComponents<Position2DComponent>();
-        const auto movementComponents = componentAccessor->ReadComponents<Movement2DComponent>();
+        const auto positionComponents = componentAccessor->ReadComponents<PositionComponent>();
+        const auto movementComponents = componentAccessor->ReadComponents<MovementComponent>();
         const auto inventoryComponents = componentAccessor->ReadComponents<InventoryComponent>();
         const auto itemComponents = componentAccessor->ReadComponents<ItemComponent>();
         const auto workerComponents = componentAccessor->ReadComponents<WorkerComponent>();
@@ -152,7 +152,7 @@ public:
     {
         frameRenderer.PrepareSceneDraw(m_material.get());
 
-        const auto positionComponents = componentAccessor->ReadComponents<Position2DComponent>();
+        const auto positionComponents = componentAccessor->ReadComponents<PositionComponent>();
         auto animationComponents = renderComponentAccessor->WriteComponents<SteveAnimationComponent>();
 
         for (int i = 0; i < componentAccessor->Count(); i++)

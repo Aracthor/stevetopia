@@ -11,10 +11,10 @@ class DataSaver;
 
 using namespace hatcher;
 
-struct Movement2DComponent
+struct MovementComponent
 {
     std::vector<glm::vec2> path; // Reversed : last element is the next step.
 };
 
-void operator<<(DataSaver& saver, const Movement2DComponent& component);
-void operator>>(DataLoader& loader, Movement2DComponent& component);
+void operator<<(DataSaver& saver, const MovementComponent& component);
+void operator>>(DataLoader& loader, MovementComponent& component);

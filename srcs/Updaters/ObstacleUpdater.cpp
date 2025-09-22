@@ -1,5 +1,5 @@
 #include "Components/ObstacleComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "WorldComponents/SquareGrid.hpp"
 
 #include "hatcher/ComponentAccessor.hpp"
@@ -20,7 +20,7 @@ class ObstacleUpdater final : public Updater
         const auto obstacle = componentAccessor->ReadComponents<ObstacleComponent>()[entity];
         if (obstacle)
         {
-            const glm::vec2 position = componentAccessor->ReadComponents<Position2DComponent>()[entity]->position;
+            const glm::vec2 position = componentAccessor->ReadComponents<PositionComponent>()[entity]->position;
             SquareGrid* grid = componentAccessor->WriteWorldComponent<SquareGrid>();
             const glm::vec2 positionMin = position + static_cast<glm::vec2>(obstacle->area.Min());
             const glm::vec2 positionMax = position + static_cast<glm::vec2>(obstacle->area.Max());
@@ -42,7 +42,7 @@ class ObstacleUpdater final : public Updater
         const auto obstacle = componentAccessor->ReadComponents<ObstacleComponent>()[entity];
         if (obstacle)
         {
-            const glm::vec2 position = componentAccessor->ReadComponents<Position2DComponent>()[entity]->position;
+            const glm::vec2 position = componentAccessor->ReadComponents<PositionComponent>()[entity]->position;
             SquareGrid* grid = componentAccessor->WriteWorldComponent<SquareGrid>();
             const glm::vec2 positionMin = position + static_cast<glm::vec2>(obstacle->area.Min());
             const glm::vec2 positionMax = position + static_cast<glm::vec2>(obstacle->area.Max());

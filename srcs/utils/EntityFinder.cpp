@@ -2,7 +2,7 @@
 
 #include <limits>
 
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 
 #include "hatcher/ComponentAccessor.hpp"
 
@@ -10,7 +10,7 @@
 Entity FindNearestEntity(const ComponentAccessor* componentAccessor, Entity sourceEntity,
                          std::function<bool(const ComponentAccessor*, Entity entity)> pred)
 {
-    const auto& positions = componentAccessor->ReadComponents<Position2DComponent>();
+    const auto& positions = componentAccessor->ReadComponents<PositionComponent>();
     const glm::vec2 source = positions[sourceEntity]->position;
     float minDistanceSq = std::numeric_limits<float>::max();
     Entity result = Entity::Invalid();

@@ -5,7 +5,7 @@
 namespace TransformationHelper
 {
 
-glm::mat4 ModelFromComponents(const Position2DComponent& position2D)
+glm::mat4 ModelFromComponents(const PositionComponent& position2D)
 {
     const float angle = glm::orientedAngle(glm::vec2(1.f, 0.f), position2D.orientation);
     glm::mat4 modelMatrix = glm::mat4(1.f);

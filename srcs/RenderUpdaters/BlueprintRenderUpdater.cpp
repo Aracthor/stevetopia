@@ -21,7 +21,7 @@
 
 #include "Components/InventoryComponent.hpp"
 #include "Components/ItemComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 
 #include "WorldComponents/Blueprint.hpp"
 #include "WorldComponents/Camera.hpp"
@@ -91,10 +91,10 @@ public:
     void Execute(IEntityManager* entityManager, ComponentAccessor* componentAccessor) override
     {
         EntityEgg buildingEgg = entityManager->CreateNewEntity(m_blueprint.building);
-        buildingEgg.GetComponent<Position2DComponent>()->position = m_spawnPosition;
+        buildingEgg.GetComponent<PositionComponent>()->position = m_spawnPosition;
         EntityEgg furnitureEgg = entityManager->CreateNewEntity(m_blueprint.furniture);
-        furnitureEgg.GetComponent<Position2DComponent>()->position = m_spawnPosition + m_blueprint.furniturePosition;
-        furnitureEgg.GetComponent<Position2DComponent>()->orientation = glm::vec2(0.f, 1.f);
+        furnitureEgg.GetComponent<PositionComponent>()->position = m_spawnPosition + m_blueprint.furniturePosition;
+        furnitureEgg.GetComponent<PositionComponent>()->orientation = glm::vec2(0.f, 1.f);
         auto& inventory = furnitureEgg.GetComponent<InventoryComponent>()->storage;
         for (const EntityDescriptorID& itemDescriptor : m_blueprint.items)
         {

@@ -18,7 +18,7 @@ RELEASE_DIR=	release/
 DEBUG_DIR=	debug/
 
 SRCS_FILES=	Components/InventoryComponent.cpp			\
-		Components/Movement2DComponent.cpp			\
+		Components/MovementComponent.cpp			\
 		Components/NameComponent.cpp				\
 									\
 		Updaters/ActionPlanningUpdater.cpp			\

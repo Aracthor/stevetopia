@@ -16,7 +16,7 @@
 #include "Components/GrowableComponent.hpp"
 #include "Components/InventoryComponent.hpp"
 #include "Components/ItemComponent.hpp"
-#include "Components/Position2DComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "RenderComponents/ItemDisplayComponent.hpp"
 #include "RenderComponents/SelectableComponent.hpp"
 #include "RenderComponents/StaticMeshComponent.hpp"
@@ -72,7 +72,7 @@ public:
     void Update(IApplication* application, const ComponentAccessor* componentAccessor,
                 ComponentAccessor* renderComponentAccessor, IFrameRenderer& frameRenderer) override
     {
-        const auto positionComponents = componentAccessor->ReadComponents<Position2DComponent>();
+        const auto positionComponents = componentAccessor->ReadComponents<PositionComponent>();
         const auto growableComponents = componentAccessor->ReadComponents<GrowableComponent>();
         const auto inventoryComponents = componentAccessor->ReadComponents<InventoryComponent>();
         const auto itemComponents = componentAccessor->ReadComponents<ItemComponent>();
