@@ -17,11 +17,13 @@ WEBASM_DIR=	webasm/
 RELEASE_DIR=	release/
 DEBUG_DIR=	debug/
 
-SRCS_FILES=	Components/InventoryComponent.cpp			\
+SRCS_FILES=	Components/BusinessComponent.cpp			\
+		Components/InventoryComponent.cpp			\
 		Components/MovementComponent.cpp			\
 		Components/NameComponent.cpp				\
 									\
 		Updaters/ActionPlanningUpdater.cpp			\
+		Updaters/BusinessUpdater.cpp				\
 		Updaters/ForestUpdater.cpp				\
 		Updaters/GrowableUpdater.cpp				\
 		Updaters/HarvestableUpdater.cpp				\

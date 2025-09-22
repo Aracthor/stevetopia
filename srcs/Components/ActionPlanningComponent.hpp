@@ -8,6 +8,16 @@ using namespace hatcher;
 
 struct ActionPlanningComponent
 {
+    enum class EAgenda : unsigned int
+    {
+        Derp,
+        Lumberjack,
+    };
+
+    EAgenda agenda = EAgenda::Derp;
     std::optional<int> currentActionIndex;
     std::optional<Entity> lockedEntity;
+
+    // TODO separate component ?
+    std::optional<Entity> employer;
 };

@@ -2,6 +2,7 @@
 #include "hatcher/EntityDescriptor.hpp"
 
 #include "Components/ActionPlanningComponent.hpp"
+#include "Components/BusinessComponent.hpp"
 #include "Components/GrowableComponent.hpp"
 #include "Components/HarvestableComponent.hpp"
 #include "Components/InventoryComponent.hpp"
@@ -24,6 +25,7 @@ namespace
 {
 
 ComponentTypeRegisterer<ActionPlanningComponent, EComponentList::Gameplay> actionPlanningRegisterer;
+ComponentTypeRegisterer<BusinessComponent, EComponentList::Gameplay> BusinessRegisterer;
 ComponentTypeRegisterer<GrowableComponent, EComponentList::Gameplay> growableRegisterer;
 ComponentTypeRegisterer<InventoryComponent, EComponentList::Gameplay> inventoryRegisterer;
 ComponentTypeRegisterer<HarvestableComponent, EComponentList::Gameplay> harvestableRegisterer;
@@ -61,6 +63,10 @@ EntityDescriptorRegisterer Axe{
 EntityDescriptorRegisterer LoggingHut{
     EntityDescriptorID::Create("LoggingHut"),
     {
+        BusinessComponent{
+            .storagePosition = {1.f, 2.f},
+            .agenda = ActionPlanningComponent::EAgenda::Lumberjack,
+        },
         NameComponent{
             .name = "Logging Hut",
         },

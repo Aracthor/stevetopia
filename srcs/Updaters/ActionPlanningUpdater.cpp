@@ -91,6 +91,20 @@ bool IsChoppableTree(const ComponentAccessor* componentAccessor, Entity entity)
     return nameComponent && nameComponent->name == "Tree" && !lockableComponent->locker;
 }
 
+class Wait : public IPlan
+{
+    bool CanBeAchieved(const ComponentAccessor* componentAccessor, Entity entity) const override { return true; }
+
+    void Start(IEntityManager* entityManager, ComponentAccessor* componentAccessor, Entity entity) const override
+    {
+        // Nothing
+    }
+
+    bool IsOngoing(const ComponentAccessor* componentAccessor, Entity entity) const override { return false; }
+};
+
+// Lumberjack
+
 class DropOffWood : public IPlan
 {
     bool CanBeAchieved(const ComponentAccessor* componentAccessor, Entity entity) const override
@@ -344,21 +358,33 @@ class MoveToAxe : public IPlan
     }
 };
 
-const IPlan* plans[] = {
-    new DropOffWood(),
-    new BringBackWood(),
-    new TakeWood(),
-    new MoveToWood(),
-    //
-    new ChopTree(),
-    new MoveToTree(),
-    new GetAxe(),
-    new MoveToAxe(),
+const std::vector<const IPlan*> plansByAgenda[] = {
+    // Derp
+    {
+        new Wait(),
+    },
+
+    // Lunberjack
+    {
+        new DropOffWood(),
+        new BringBackWood(),
+        new TakeWood(),
+        new MoveToWood(),
+        //
+        new ChopTree(),
+        new MoveToTree(),
+        new GetAxe(),
+        new MoveToAxe(),
+    },
 };
 
 void UpdatePlanning(ActionPlanningComponent& planning, IEntityManager* entityManager,
                     ComponentAccessor* componentAccessor, Entity entity)
 {
+    const unsigned int agendaIndex = static_cast<unsigned int>(planning.agenda);
+    HATCHER_ASSERT(agendaIndex < std::size(plansByAgenda))
+    const std::vector<const IPlan*> plans = plansByAgenda[agendaIndex];
+
     if (!planning.currentActionIndex || !plans[*planning.currentActionIndex]->IsOngoing(componentAccessor, entity))
     {
         if (planning.lockedEntity)
