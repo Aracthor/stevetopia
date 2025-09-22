@@ -19,6 +19,8 @@
 
 #include "RenderUpdaterOrder.hpp"
 
+#include "Components/InventoryComponent.hpp"
+#include "Components/ItemComponent.hpp"
 #include "Components/Position2DComponent.hpp"
 
 #include "WorldComponents/Blueprint.hpp"
@@ -29,35 +31,81 @@ using namespace hatcher;
 
 namespace
 {
+struct BlueprintDescriptor
+{
+    EntityDescriptorID building;
+    EntityDescriptorID furniture;
+    glm::vec2 furniturePosition;
+    std::vector<EntityDescriptorID> items;
+
+    void Save(DataSaver& saver) const
+    {
+        saver << building;
+        saver << furniture;
+        saver << furniturePosition;
+        saver << items;
+    }
+
+    void Load(DataLoader& loader)
+    {
+        loader >> building;
+        loader >> furniture;
+        loader >> furniturePosition;
+        loader >> items;
+    }
+};
+
+const BlueprintDescriptor loggingHut{
+    .building = EntityDescriptorID::Create("LoggingHut"),
+    .furniture = EntityDescriptorID::Create("Rack"),
+    .furniturePosition = glm::vec2(0.f, 2.f),
+    .items =
+        {
+            EntityDescriptorID::Create("Axe"),
+            EntityDescriptorID::Create("Axe"),
+            EntityDescriptorID::Create("Axe"),
+        },
+};
+
 class CreateBuildingFromBlueprint final : public ICommand
 {
 public:
-    CreateBuildingFromBlueprint(const EntityDescriptorID& entityDescriptor, glm::vec2 spawnPosition)
-        : m_entityDescriptor(entityDescriptor)
+    CreateBuildingFromBlueprint(const BlueprintDescriptor& blueprint, glm::vec2 spawnPosition)
+        : m_blueprint(blueprint)
         , m_spawnPosition(spawnPosition)
     {
     }
 
     void Save(DataSaver& saver) const override
     {
-        saver << m_entityDescriptor;
+        m_blueprint.Save(saver);
         saver << m_spawnPosition;
     }
 
     void Load(DataLoader& loader) override
     {
-        loader >> m_entityDescriptor;
+        m_blueprint.Load(loader);
         loader >> m_spawnPosition;
     }
 
     void Execute(IEntityManager* entityManager, ComponentAccessor* componentAccessor) override
     {
-        EntityEgg entityEgg = entityManager->CreateNewEntity(m_entityDescriptor);
-        entityEgg.GetComponent<Position2DComponent>()->position = m_spawnPosition;
+        EntityEgg buildingEgg = entityManager->CreateNewEntity(m_blueprint.building);
+        buildingEgg.GetComponent<Position2DComponent>()->position = m_spawnPosition;
+        EntityEgg furnitureEgg = entityManager->CreateNewEntity(m_blueprint.furniture);
+        furnitureEgg.GetComponent<Position2DComponent>()->position = m_spawnPosition + m_blueprint.furniturePosition;
+        furnitureEgg.GetComponent<Position2DComponent>()->orientation = glm::vec2(0.f, 1.f);
+        auto& inventory = furnitureEgg.GetComponent<InventoryComponent>()->storage;
+        for (const EntityDescriptorID& itemDescriptor : m_blueprint.items)
+        {
+            EntityEgg newItem = entityManager->CreateNewEntity(itemDescriptor);
+            newItem.GetComponent<ItemComponent>()->inventory = furnitureEgg.NewEntityID();
+            inventory.push_back(newItem.NewEntityID());
+        }
     }
 
 private:
-    EntityDescriptorID m_entityDescriptor;
+    BlueprintDescriptor m_blueprint;
     glm::vec2 m_spawnPosition;
 
     COMMAND_HEADER(CreateBuildingFromBlueprint)
@@ -66,7 +114,7 @@ REGISTER_COMMAND(CreateBuildingFromBlueprint);
 
 bool CanCreateBuilding(const SquareGrid* squareGrid, glm::vec2 position)
 {
-    const Box2i obstacle(glm::ivec2(-1, -1), glm::ivec2(1, 1)); // TODO read ObstacleComponent.
+    const Box2i obstacle(glm::ivec2(-1, -1), glm::ivec2(1, 2)); // TODO read ObstacleComponent.
     for (int y = obstacle.Min().y; y <= obstacle.Max().y; y++)
     {
         for (int x = obstacle.Min().x; x <= obstacle.Max().x; x++)
@@ -103,8 +151,7 @@ class BlueprintEventListener : public IEventListener
                  blueprint->possible)
         {
             blueprint->active = false;
-            commandManager->AddCommand(
-                new CreateBuildingFromBlueprint(EntityDescriptorID::Create("LoggingHut"), blueprint->position));
+            commandManager->AddCommand(new CreateBuildingFromBlueprint(loggingHut, blueprint->position));
         }
     }
 };
