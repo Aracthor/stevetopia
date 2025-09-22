@@ -96,6 +96,23 @@ EntityDescriptorRegisterer Melon{
     },
 };
 
+// Would be constexpr if the glm was...
+ItemDisplayComponent::Locations RackToolLocations()
+{
+    ItemDisplayComponent::Locations rackItemLocations(10, &ItemDisplayComponent::LocationHash);
+    glm::mat4 rackToolLocation(1.f);
+    rackToolLocation = glm::translate(rackToolLocation, glm::vec3(0.08f, 0.3f, 0.f));
+    rackToolLocation = glm::rotate(rackToolLocation, glm::radians(-10.f), glm::vec3(0.f, 1.f, 0.f));
+    rackItemLocations[std::make_pair(ItemComponent::Tool, 0)] = rackToolLocation;
+    rackToolLocation = glm::translate(rackToolLocation, glm::vec3(0.f, -0.2f, 0.f));
+    rackItemLocations[std::make_pair(ItemComponent::Tool, 1)] = rackToolLocation;
+    rackToolLocation = glm::translate(rackToolLocation, glm::vec3(0.f, -0.2f, 0.f));
+    rackItemLocations[std::make_pair(ItemComponent::Tool, 2)] = rackToolLocation;
+    rackToolLocation = glm::translate(rackToolLocation, glm::vec3(0.f, -0.2f, 0.f));
+    rackItemLocations[std::make_pair(ItemComponent::Tool, 3)] = rackToolLocation;
+    return rackItemLocations;
+}
+
 EntityDescriptorRegisterer Rack{
     EntityDescriptorID::Create("Rack"),
     {
@@ -106,7 +123,7 @@ EntityDescriptorRegisterer Rack{
         Position2DComponent{},
     },
     {
-        ItemDisplayComponent{.locations = {}},
+        ItemDisplayComponent{.locations = RackToolLocations()},
         SelectableComponent{},
         StaticMeshComponent{
             .type = StaticMeshComponent::Rack,

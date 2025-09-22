@@ -1,7 +1,6 @@
 #include "Components/InventoryComponent.hpp"
 #include "Components/ItemComponent.hpp"
 #include "Components/Position2DComponent.hpp"
-#include "RenderComponents/ItemDisplayComponent.hpp"
 #include "WorldComponents/Camera.hpp"
 #include "WorldComponents/SquareGrid.hpp"
 
@@ -24,10 +23,9 @@ class CreateEntityCommand final : public ICommand
 {
 public:
     CreateEntityCommand(const EntityDescriptorID& entityDescriptor, span<const EntityDescriptorID> inventoryDescriptors,
-                        const ItemDisplayComponent::Locations& itemLocations, glm::vec2 spawnPosition)
+                        glm::vec2 spawnPosition)
         : m_entityDescriptor(entityDescriptor)
         , m_inventoryDescriptors(inventoryDescriptors.begin(), inventoryDescriptors.end())
-        , m_locations(itemLocations)
         , m_spawnPosition(spawnPosition)
     {
     }
@@ -37,7 +35,6 @@ public:
         saver << m_entityDescriptor;
         saver << m_inventoryDescriptors;
         saver << m_spawnPosition;
-        saver << m_locations;
     }
 
     void Load(DataLoader& loader) override
@@ -45,7 +42,6 @@ public:
         loader >> m_entityDescriptor;
         loader >> m_inventoryDescriptors;
         loader >> m_spawnPosition;
-        loader >> m_locations;
     }
 
     void Execute(IEntityManager* entityManager, ComponentAccessor* componentAccessor) override
@@ -66,16 +62,11 @@ public:
             auto& inventoryComponent = entityEgg.GetComponent<InventoryComponent>();
             inventoryComponent->storage = inventoryStorage;
         }
-        if (!m_locations.empty())
-        {
-            entityEgg.GetRenderingComponent<ItemDisplayComponent>()->locations = m_locations;
-        }
     }
 
 private:
     EntityDescriptorID m_entityDescriptor;
     std::vector<EntityDescriptorID> m_inventoryDescriptors;
-    ItemDisplayComponent::Locations m_locations;
     glm::vec2 m_spawnPosition;
 
     COMMAND_HEADER(CreateEntityCommand)
@@ -89,22 +80,10 @@ public:
         : m_steveEntityDescriptor(EntityDescriptorID::Create("Steve"))
         , m_treeEntityDescriptor(EntityDescriptorID::Create("Tree"))
         , m_rackEntityDescriptor(EntityDescriptorID::Create("Rack"))
-        , m_rackItemLocations(10, &ItemDisplayComponent::LocationHash)
     {
         m_rackInventoryDescriptors.push_back(EntityDescriptorID::Create("Axe"));
         m_rackInventoryDescriptors.push_back(EntityDescriptorID::Create("Axe"));
         m_rackInventoryDescriptors.push_back(EntityDescriptorID::Create("Axe"));
-
-        glm::mat4 rackToolLocation(1.f);
-        rackToolLocation = glm::translate(rackToolLocation, glm::vec3(0.08f, 0.3f, 0.f));
-        rackToolLocation = glm::rotate(rackToolLocation, glm::radians(-10.f), glm::vec3(0.f, 1.f, 0.f));
-        m_rackItemLocations[std::make_pair(ItemComponent::Tool, 0)] = rackToolLocation;
-        rackToolLocation = glm::translate(rackToolLocation, glm::vec3(0.f, -0.2f, 0.f));
-        m_rackItemLocations[std::make_pair(ItemComponent::Tool, 1)] = rackToolLocation;
-        rackToolLocation = glm::translate(rackToolLocation, glm::vec3(0.f, -0.2f, 0.f));
-        m_rackItemLocations[std::make_pair(ItemComponent::Tool, 2)] = rackToolLocation;
-        rackToolLocation = glm::translate(rackToolLocation, glm::vec3(0.f, -0.2f, 0.f));
-        m_rackItemLocations[std::make_pair(ItemComponent::Tool, 3)] = rackToolLocation;
     }
 
     void GetEvent(const SDL_Event& event, IApplication* application, ICommandManager* commandManager,
@@ -124,7 +103,6 @@ public:
             const glm::vec2 entitySpawnPosition = grid->GetTileCenter(worldCoords2D);
             EntityDescriptorID* entityDescriptor = nullptr;
             span<const EntityDescriptorID> inventoryDescriptors = {};
-            ItemDisplayComponent::Locations locations(10, &ItemDisplayComponent::LocationHash);
             if (event.button.button == SDL_BUTTON_RIGHT)
             {
                 entityDescriptor = &m_steveEntityDescriptor;
@@ -138,12 +116,11 @@ public:
             {
                 entityDescriptor = &m_rackEntityDescriptor;
                 inventoryDescriptors = {m_rackInventoryDescriptors};
-                locations = m_rackItemLocations;
             }
 
             if (entityDescriptor)
                 commandManager->AddCommand(
-                    new CreateEntityCommand(*entityDescriptor, inventoryDescriptors, locations, entitySpawnPosition));
+                    new CreateEntityCommand(*entityDescriptor, inventoryDescriptors, entitySpawnPosition));
         }
     }
 
@@ -153,7 +130,6 @@ private:
     EntityDescriptorID m_rackEntityDescriptor;
     std::vector<EntityDescriptorID> m_steveInventoryDescriptors;
     std::vector<EntityDescriptorID> m_rackInventoryDescriptors;
-    ItemDisplayComponent::Locations m_rackItemLocations;
 };
 
 EventListenerRegisterer<EntityCreatorEventListener> registerer;
