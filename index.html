@@ -25,6 +25,10 @@
         display: block;
       }
 
+      #comments {
+        vertical-align: top;
+      }
+
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
       #emscriptenCanvas {
         border: 0px none;
@@ -59,6 +63,24 @@
             <canvas id="emscriptenCanvas" width="800" height="600"></canvas>
             <p id="errorText">Loading...</p>
           </div>
+        </td>
+        <td id="comments">
+          <fieldset>
+            <legend>Stevetopia</legend>
+            Work-in-progress draft project.<br/>
+            Current commands :
+            <ul>
+              <li><b>W|A|S|D</b>: move camera</li>
+              <li><b>Mouse left button</b>: select</li>
+              <li><b>Mouse middle button + Mouse motion</b>: turn camera</li>
+              <li><b>Ctrl+Mouse left button</b>: plant tree</li>
+              <li><b>Ctrl+Mouse right button</b>: spawn steve</li>
+              <li><b>B</b>: open/close blueprint (validate with left mouse button)</li>
+              <li><b>I</b>: open inventory panel (display selected entity inventory)</li>
+              <li><b>F5</b>: save state</li>
+              <li><b>F9</b>: load state</li>
+            </ul>
+          </fieldset>
         </td>
       </tr>
 
