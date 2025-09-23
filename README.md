@@ -1,13 +1,15 @@
 # Stevetopia
 
-An ongoing game project with still unclear goal.
+An work-in-progress game project with still unclear goal.  
 The only constant being : there are Steves, lot of it.
 
 ![Stevetopia -- demo](/screenshots/demo.png)
 
 This project is mostly a proof-of-concept of [Hatcher engine](https://github.com/Aracthor/hatcher).
 
-## Running
+Check the [Online demo](https://aracthor.github.io/stevetopia/index.html) !
+
+## Running locally
 
 Compile and run the native version by running:
 ```
