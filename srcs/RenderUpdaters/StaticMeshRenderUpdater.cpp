@@ -120,30 +120,33 @@ public:
                 if (modelMatrix)
                 {
                     frameRenderer.PrepareSceneDraw(material.get());
-                    const int count = itemComponent ? itemComponent->count : 1;
+                    int count = itemComponent ? std::min(itemComponent->count, 12) : 1;
                     HATCHER_ASSERT(count >= 1);
-                    switch (count)
+                    while (count > 0)
                     {
-                    case 1:
-                        mesh->Draw(*modelMatrix);
-                        break;
-                    case 2:
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.25f, 0.f, 0.f)));
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(-0.25f, 0.f, 0.f)));
-                        break;
-                    case 3:
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.25f, 0.25f, 0.f)));
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(-0.25f, 0.25f, 0.f)));
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.f, -0.25f, 0.f)));
-                        break;
-                    default:
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.f, 0.f, 0.5f)));
-                    case 4:
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.25f, 0.25f, 0.f)));
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.25f, -0.25f, 0.f)));
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(-0.25f, 0.25f, 0.f)));
-                        mesh->Draw(glm::translate(*modelMatrix, glm::vec3(-0.25f, -0.25f, 0.f)));
-                        break;
+                        switch (count)
+                        {
+                        case 1:
+                            mesh->Draw(*modelMatrix);
+                            break;
+                        case 2:
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.25f, 0.f, 0.f)));
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(-0.25f, 0.f, 0.f)));
+                            break;
+                        case 3:
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.25f, 0.25f, 0.f)));
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(-0.25f, 0.25f, 0.f)));
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.f, -0.25f, 0.f)));
+                            break;
+                        default:
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.25f, 0.25f, 0.f)));
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(0.25f, -0.25f, 0.f)));
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(-0.25f, 0.25f, 0.f)));
+                            mesh->Draw(glm::translate(*modelMatrix, glm::vec3(-0.25f, -0.25f, 0.f)));
+                            break;
+                        }
+                        count -= 4;
+                        modelMatrix = glm::translate(*modelMatrix, glm::vec3(0.f, 0.f, 0.5f));
                     }
                 }
             }

@@ -171,7 +171,7 @@ EntityDescriptorRegisterer Tree{
         },
         HarvestableComponent{
             .harvest = EntityDescriptorID::Create("Wood"),
-            .amount = 5,
+            .amount = 2,
         },
         LockableComponent{},
         ObstacleComponent{
