@@ -9,6 +9,7 @@
 #include "hatcher/Graphics/MeshLoader.hpp"
 #include "hatcher/Graphics/RenderUpdater.hpp"
 #include "hatcher/Graphics/Texture.hpp"
+#include "hatcher/IApplication.hpp"
 #include "hatcher/Maths/glm_pure.hpp"
 
 #include "Components/InventoryComponent.hpp"
@@ -41,6 +42,7 @@ public:
         const auto workerComponents = componentAccessor->ReadComponents<WorkerComponent>();
         auto itemDisplayComponents = renderComponentAccessor->WriteComponents<ItemDisplayComponent>();
         auto animationComponents = renderComponentAccessor->WriteComponents<SteveAnimationComponent>();
+        const float gameSpeed = application->GetUpdateTickrate() / 60.f;
 
         for (int i = 0; i < componentAccessor->Count(); i++)
         {
@@ -49,7 +51,7 @@ public:
                 SteveAnimationComponent& animation = *animationComponents[i];
                 const bool moving = !movementComponents[i]->path.empty();
                 const bool working = workerComponents[i] && workerComponents[i]->workIndex;
-                UpdateAnimationComponent(animation, moving, working);
+                UpdateAnimationComponent(animation, gameSpeed, moving, working);
 
                 const auto IsResource = [&itemComponents](Entity entity)
                 { return itemComponents[entity]->type == ItemComponent::Resource; };
@@ -78,9 +80,10 @@ public:
     }
 
 private:
-    void UpdateAnimationComponent(SteveAnimationComponent& animationComponent, bool moving, bool working)
+    void UpdateAnimationComponent(SteveAnimationComponent& animationComponent, float gameSpeed, bool moving,
+                                  bool working)
     {
-        const float legMoveSpeed = 0.1f;
+        const float legMoveSpeed = 0.1f * gameSpeed;
         const float legMaxAngle = M_PI / 4.f;
         if (moving)
         {
@@ -101,7 +104,7 @@ private:
                 animationComponent.rightLegAngle = 0.f;
         }
 
-        const float armMoveSpeed = 0.05f;
+        const float armMoveSpeed = 0.05f * gameSpeed;
         animationComponent.rightArmAngle = 0.f;
         animationComponent.leftArmAngle = 0.f;
         if (working)
