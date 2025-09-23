@@ -108,14 +108,9 @@ public:
                 entityDescriptor = &m_steveEntityDescriptor;
                 inventoryDescriptors = {m_steveInventoryDescriptors};
             }
-            else if (event.button.button == SDL_BUTTON_MIDDLE)
-            {
-                entityDescriptor = &m_treeEntityDescriptor;
-            }
             else if (event.button.button == SDL_BUTTON_LEFT)
             {
-                entityDescriptor = &m_rackEntityDescriptor;
-                inventoryDescriptors = {m_rackInventoryDescriptors};
+                entityDescriptor = &m_treeEntityDescriptor;
             }
 
             if (entityDescriptor)
