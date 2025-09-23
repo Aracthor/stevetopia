@@ -3,6 +3,7 @@
 
 #include "Components/ActionPlanningComponent.hpp"
 #include "Components/BusinessComponent.hpp"
+#include "Components/EmployableComponent.hpp"
 #include "Components/GrowableComponent.hpp"
 #include "Components/HarvestableComponent.hpp"
 #include "Components/InventoryComponent.hpp"
@@ -25,7 +26,8 @@ namespace
 {
 
 ComponentTypeRegisterer<ActionPlanningComponent, EComponentList::Gameplay> actionPlanningRegisterer;
-ComponentTypeRegisterer<BusinessComponent, EComponentList::Gameplay> BusinessRegisterer;
+ComponentTypeRegisterer<BusinessComponent, EComponentList::Gameplay> businessRegisterer;
+ComponentTypeRegisterer<EmployableComponent, EComponentList::Gameplay> employableRegisterer;
 ComponentTypeRegisterer<GrowableComponent, EComponentList::Gameplay> growableRegisterer;
 ComponentTypeRegisterer<InventoryComponent, EComponentList::Gameplay> inventoryRegisterer;
 ComponentTypeRegisterer<HarvestableComponent, EComponentList::Gameplay> harvestableRegisterer;
@@ -141,6 +143,7 @@ EntityDescriptorRegisterer Steve{
     EntityDescriptorID::Create("Steve"),
     {
         ActionPlanningComponent{},
+        EmployableComponent{},
         InventoryComponent{},
         MovementComponent{},
         NameComponent{
@@ -189,6 +192,7 @@ EntityDescriptorRegisterer Wood{
         ItemComponent{
             .type = ItemComponent::Resource,
         },
+        EmployableComponent{},
         LockableComponent{},
         NameComponent{
             .name = "Wood",

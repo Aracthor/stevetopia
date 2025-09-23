@@ -1,4 +1,6 @@
 #include "Components/ActionPlanningComponent.hpp"
+#include "Components/BusinessComponent.hpp"
+#include "Components/EmployableComponent.hpp"
 #include "Components/InventoryComponent.hpp"
 #include "Components/ItemComponent.hpp"
 #include "Components/LockableComponent.hpp"
@@ -23,7 +25,18 @@ using namespace hatcher;
 namespace
 {
 
-const glm::vec2 woodTarget = glm::vec2(0.5f, 0.5f);
+glm::vec2 GetStorageTarget(const ComponentAccessor* componentAccessor, Entity entity)
+{
+    const auto& employableComponent = componentAccessor->ReadComponents<EmployableComponent>()[entity];
+    HATCHER_ASSERT(employableComponent);
+    HATCHER_ASSERT(employableComponent->employer);
+    const Entity employer = *employableComponent->employer;
+    const auto& businessComponent = componentAccessor->ReadComponents<BusinessComponent>()[employer];
+    const auto& positionComponent = componentAccessor->ReadComponents<PositionComponent>()[employer];
+    HATCHER_ASSERT(businessComponent);
+    HATCHER_ASSERT(positionComponent);
+    return positionComponent->position + businessComponent->storagePosition;
+}
 
 class IPlan
 {
@@ -51,18 +64,11 @@ bool IsAvailableEntityAxe(const ComponentAccessor* componentAccessor, Entity ent
            !componentAccessor->ReadComponents<LockableComponent>()[entity]->locker;
 }
 
-bool IsWoodStack(const ComponentAccessor* componentAccessor, Entity entity)
-{
-    const auto& positionComponent = componentAccessor->ReadComponents<PositionComponent>()[entity];
-    return IsEntityWood(componentAccessor, entity) && positionComponent && positionComponent->position == woodTarget;
-}
-
 bool IsGatherableWood(const ComponentAccessor* componentAccessor, Entity entity)
 {
-    const auto& positionComponent = componentAccessor->ReadComponents<PositionComponent>()[entity];
+    const auto& employableComponent = componentAccessor->ReadComponents<EmployableComponent>()[entity];
     const auto& lockableComponent = componentAccessor->ReadComponents<LockableComponent>()[entity];
-    return IsEntityWood(componentAccessor, entity) && positionComponent && positionComponent->position != woodTarget &&
-           !lockableComponent->locker;
+    return IsEntityWood(componentAccessor, entity) && !lockableComponent->locker && !employableComponent->employer;
 }
 
 bool ContainsAxe(const ComponentAccessor* componentAccessor, Entity entity)
@@ -111,6 +117,7 @@ class DropOffWood : public IPlan
     {
         const InventoryComponent& inventory = *componentAccessor->ReadComponents<InventoryComponent>()[entity];
         const glm::vec2 position = componentAccessor->ReadComponents<PositionComponent>()[entity]->position;
+        const glm::vec2 woodTarget = GetStorageTarget(componentAccessor, entity);
         auto IsWood = [componentAccessor](Entity entity) { return IsEntityWood(componentAccessor, entity); };
         return glm::length(position - woodTarget) <= 1.f &&
                std::any_of(inventory.storage.begin(), inventory.storage.end(), IsWood);
@@ -118,6 +125,7 @@ class DropOffWood : public IPlan
 
     void Start(IEntityManager* entityManager, ComponentAccessor* componentAccessor, Entity entity) const override
     {
+        auto employables = componentAccessor->WriteComponents<EmployableComponent>();
         auto positions = componentAccessor->WriteComponents<PositionComponent>();
         auto items = componentAccessor->WriteComponents<ItemComponent>();
 
@@ -125,10 +133,19 @@ class DropOffWood : public IPlan
         auto IsWood = [componentAccessor](Entity entity) { return IsEntityWood(componentAccessor, entity); };
         auto it = std::find_if(inventory.storage.begin(), inventory.storage.end(), IsWood);
         HATCHER_ASSERT(it != inventory.storage.end());
+        const Entity employer = *employables[entity]->employer;
 
+        const auto IsWoodStack = [employer](const ComponentAccessor* componentAccessor, Entity entity)
+        {
+            const auto& employableComponent = componentAccessor->ReadComponents<EmployableComponent>()[entity];
+            return IsEntityWood(componentAccessor, entity) && employableComponent &&
+                   employableComponent->employer == employer;
+        };
         const Entity gatherableWood = FindNearestEntity(componentAccessor, entity, IsWoodStack);
         if (gatherableWood == Entity::Invalid())
         {
+            const glm::vec2 woodTarget = GetStorageTarget(componentAccessor, entity);
+            employables[*it]->employer = employer;
             items[*it]->inventory = Entity::Invalid();
             positions[*it] = PositionComponent{
                 .position = woodTarget,
@@ -161,6 +178,7 @@ class BringBackWood : public IPlan
         const glm::vec2 position = componentAccessor->ReadComponents<PositionComponent>()[entity]->position;
         const SquareGrid* grid = componentAccessor->ReadWorldComponent<SquareGrid>();
 
+        const glm::vec2 woodTarget = GetStorageTarget(componentAccessor, entity);
         std::vector<glm::vec2> path = grid->GetPathIfPossible(position, woodTarget, 1.f);
         componentAccessor->WriteComponents<MovementComponent>()[entity]->path = path;
     }
@@ -347,8 +365,6 @@ class MoveToAxe : public IPlan
         const glm::vec2 treePosition = positions[rackEntity]->position;
         std::vector<glm::vec2> path = grid->GetPathIfPossible(position, treePosition, 1.f);
         componentAccessor->WriteComponents<MovementComponent>()[entity]->path = path;
-
-        componentAccessor->WriteComponents<ActionPlanningComponent>()[entity]->lockedEntity = rackEntity;
     }
 
     bool IsOngoing(const ComponentAccessor* componentAccessor, Entity entity) const override

@@ -17,7 +17,4 @@ struct ActionPlanningComponent
     EAgenda agenda = EAgenda::Derp;
     std::optional<int> currentActionIndex;
     std::optional<Entity> lockedEntity;
-
-    // TODO separate component ?
-    std::optional<Entity> employer;
 };
