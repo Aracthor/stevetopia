@@ -43,6 +43,7 @@ public:
             return;
 
         const auto inventoryComponents = componentAccessor->ReadComponents<InventoryComponent>();
+        const auto itemComponents = componentAccessor->ReadComponents<ItemComponent>();
         const auto selectableComponents = renderComponentAccessor->ReadComponents<SelectableComponent>();
         const auto nameComponents = componentAccessor->ReadComponents<NameComponent>();
 
@@ -62,7 +63,10 @@ public:
                     for (Entity item : inventory.storage)
                     {
                         HATCHER_ASSERT(nameComponents[item]);
-                        ImGui::Selectable(nameComponents[item]->name.c_str());
+                        char item_field[0x100];
+                        snprintf(item_field, std::size(item_field), "%s: %d", nameComponents[item]->name.c_str(),
+                                 itemComponents[item]->count);
+                        ImGui::Selectable(item_field);
                     }
                 }
                 ImGui::End();
