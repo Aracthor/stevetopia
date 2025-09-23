@@ -68,7 +68,9 @@ bool IsGatherableWood(const ComponentAccessor* componentAccessor, Entity entity)
 {
     const auto& employableComponent = componentAccessor->ReadComponents<EmployableComponent>()[entity];
     const auto& lockableComponent = componentAccessor->ReadComponents<LockableComponent>()[entity];
-    return IsEntityWood(componentAccessor, entity) && !lockableComponent->locker && !employableComponent->employer;
+    const auto& positionComponent = componentAccessor->ReadComponents<PositionComponent>()[entity];
+    return IsEntityWood(componentAccessor, entity) && positionComponent && !lockableComponent->locker &&
+           !employableComponent->employer;
 }
 
 bool ContainsAxe(const ComponentAccessor* componentAccessor, Entity entity)
